@@ -1,10 +1,12 @@
-import { useEffect, type ReactNode } from 'react'
-import { createPortal } from 'react-dom'
-import css from './Modal.module.css'
+
+
+import { useEffect, type ReactNode } from "react";
+import { createPortal } from "react-dom";
+import css from "./Modal.module.css";
 
 interface ModalProps {
-  children: ReactNode
-  onClose: () => void
+  children: ReactNode;
+  onClose: () => void;
 }
 
 // Тут ми створюємо універсальну модалку через portal.
@@ -12,28 +14,28 @@ interface ModalProps {
 // і блокує прокрутку сторінки, поки відкрита.
 export default function Modal({ children, onClose }: ModalProps) {
   useEffect(() => {
-    const previousOverflow = document.body.style.overflow
+    const previousOverflow = document.body.style.overflow;
 
-    document.body.style.overflow = 'hidden'
+    document.body.style.overflow = "hidden";
 
     // Тут ми закриваємо модалку, якщо користувач натиснув Escape.
     function handleEscape(event: KeyboardEvent) {
-      if (event.key === 'Escape') {
-        onClose()
+      if (event.key === "Escape") {
+        onClose();
       }
     }
 
-    window.addEventListener('keydown', handleEscape)
+    window.addEventListener("keydown", handleEscape);
 
     return () => {
-      document.body.style.overflow = previousOverflow
-      window.removeEventListener('keydown', handleEscape)
-    }
-  }, [onClose])
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", handleEscape);
+    };
+  }, [onClose]);
 
   // Тут ми не даємо кліку всередині модалки закрити її.
   function handleModalClick(event: React.MouseEvent<HTMLDivElement>) {
-    event.stopPropagation()
+    event.stopPropagation();
   }
 
   return createPortal(
@@ -47,6 +49,6 @@ export default function Modal({ children, onClose }: ModalProps) {
         {children}
       </div>
     </div>,
-    document.body
-  )
+    document.body,
+  );
 }

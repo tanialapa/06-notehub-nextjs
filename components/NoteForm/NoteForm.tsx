@@ -1,54 +1,51 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { ErrorMessage, Field, Form, Formik } from 'formik'
-import * as Yup from 'yup'
-import css from './NoteForm.module.css'
-import type { NoteTag } from '../../types/note'
-import { createNote } from '../../services/noteService'
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { ErrorMessage, Field, Form, Formik } from "formik";
+import * as Yup from "yup";
+import css from "./NoteForm.module.css";
+import type { NoteTag } from "../../types/note";
+import { createNote } from "../../lib/api";
 
 interface NoteFormProps {
-  onCancel: () => void
-  onSuccess: () => void
+  onCancel: () => void;
+  onSuccess: () => void;
 }
 
 interface NoteFormValues {
-  title: string
-  content: string
-  tag: NoteTag
+  title: string;
+  content: string;
+  tag: NoteTag;
 }
 
 const initialValues: NoteFormValues = {
-  title: '',
-  content: '',
-  tag: 'Todo',
-}
+  title: "",
+  content: "",
+  tag: "Todo",
+};
 
 const validationSchema = Yup.object({
-  title: Yup.string().min(3).max(50).required('Title is required'),
+  title: Yup.string().min(3).max(50).required("Title is required"),
   content: Yup.string().max(500),
   tag: Yup.mixed<NoteTag>()
-    .oneOf(['Todo', 'Work', 'Personal', 'Meeting', 'Shopping'])
-    .required('Tag is required'),
-})
+    .oneOf(["Todo", "Work", "Personal", "Meeting", "Shopping"])
+    .required("Tag is required"),
+});
 
 // Тут ми створюємо форму нової нотатки.
 // Вона сама відправляє дані на сервер і після успіху оновлює список нотаток.
-export default function NoteForm({
-  onCancel,
-  onSuccess,
-}: NoteFormProps) {
-  const queryClient = useQueryClient()
+export default function NoteForm({ onCancel, onSuccess }: NoteFormProps) {
+  const queryClient = useQueryClient();
 
   const createNoteMutation = useMutation({
     mutationFn: createNote,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['notes'] })
-      onSuccess()
+      queryClient.invalidateQueries({ queryKey: ["notes"] });
+      onSuccess();
     },
-  })
+  });
 
   // Тут ми відправляємо дані форми на сервер.
   async function handleSubmit(values: NoteFormValues) {
-    await createNoteMutation.mutateAsync(values)
+    await createNoteMutation.mutateAsync(values);
   }
 
   return (
@@ -89,11 +86,7 @@ export default function NoteForm({
         </div>
 
         <div className={css.actions}>
-          <button
-            type="button"
-            className={css.cancelButton}
-            onClick={onCancel}
-          >
+          <button type="button" className={css.cancelButton} onClick={onCancel}>
             Cancel
           </button>
           <button
@@ -106,5 +99,5 @@ export default function NoteForm({
         </div>
       </Form>
     </Formik>
-  )
+  );
 }

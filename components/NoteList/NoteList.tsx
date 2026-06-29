@@ -1,32 +1,32 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import css from './NoteList.module.css'
-import { deleteNote } from '../../services/noteService'
-import type { Note } from '../../types/note'
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import css from "./NoteList.module.css";
+import { deleteNote } from "../../lib/api";
+import type { Note } from "../../types/note";
 
 interface NoteListProps {
-  notes: Note[]
+  notes: Note[];
 }
 
 // Тут ми показуємо список нотаток
 // і даємо можливість видалити будь-яку нотатку.
 export default function NoteList({ notes }: NoteListProps) {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   const deleteNoteMutation = useMutation({
     mutationFn: deleteNote,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['notes'] })
+      queryClient.invalidateQueries({ queryKey: ["notes"] });
     },
-  })
+  });
 
   // Тут ми видаляємо нотатку за її id.
   function handleDelete(noteId: string) {
-    deleteNoteMutation.mutate(noteId)
+    deleteNoteMutation.mutate(noteId);
   }
 
   return (
     <ul className={css.list}>
-      {notes.map(note => (
+      {notes.map((note) => (
         <li key={note.id} className={css.listItem}>
           <h2 className={css.title}>{note.title}</h2>
           <p className={css.content}>{note.content}</p>
@@ -35,7 +35,10 @@ export default function NoteList({ notes }: NoteListProps) {
             <button
               className={css.button}
               onClick={() => handleDelete(note.id)}
-              disabled={deleteNoteMutation.isPending && deleteNoteMutation.variables === note.id}
+              disabled={
+                deleteNoteMutation.isPending &&
+                deleteNoteMutation.variables === note.id
+              }
             >
               Delete
             </button>
@@ -43,5 +46,5 @@ export default function NoteList({ notes }: NoteListProps) {
         </li>
       ))}
     </ul>
-  )
+  );
 }
