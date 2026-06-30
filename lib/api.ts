@@ -2,13 +2,20 @@ import axios from 'axios'
 import type { Note, NoteTag } from '../types/note'
 
 const token = process.env.NEXT_PUBLIC_NOTEHUB_TOKEN
+const BASE_URL = "https://notehub-public.goit.study/api";
 
 const notehubApi = axios.create({
-  baseURL: 'https://notehub-public.goit.study/api',
+  baseURL: BASE_URL,
   headers: {
     Authorization: `Bearer ${token}`,
   },
 })
+
+export async function fetchNoteById(noteId: string): Promise<Note> {
+  const response = await notehubApi.get<Note>(`/notes/${noteId}`)
+  return response.data
+}
+
 
 export interface FetchNotesParams {
   page: number
